@@ -3,21 +3,22 @@ import Swal from "sweetalert2";
 import SidebarCliente from "../components/dashboard/SidebarCliente";
 import CambiarPlan from "../components/CambiarPlan";
 
-
 function ClienteDashboard({ setVista }) {
-  const [perfil, setPerfil] = useState ([null]);
+  const [perfil, setPerfil] = useState(null);
   const [planActual, setPlanActual] = useState("PREMIUM");
   const [verPlanes, setVerPlanes] = useState(false);
-  const API_URL = "https://69c2c5f37518bf8facbf7620.mockapi.io/Usuario"
+  const API_URL = "https://69c2c5f37518bf8facbf7620.mockapi.io/Usuario";
+  
   const usuario = JSON.parse(localStorage.getItem("usuario"));
 
   useEffect(() => {
-    const usuarioLocal = JSON.parse(localStorage.getItem("usuario"));
-    if (usuarioLocal && usuarioLocal.id) {
-      fetch(`${API_URL}/${usuarioLocal.id}`)
+    if (usuario && usuario.idusuario) {
+      fetch(`${API_URL}/${usuario.idusuario}`)
         .then((res) => res.json())
         .then((data) => setPerfil(data))
         .catch((error) => console.error("Error al cargar perfil:", error));
+    } else {
+      setPerfil({});
     }
   }, []);
 
@@ -26,27 +27,25 @@ function ClienteDashboard({ setVista }) {
     localStorage.removeItem("token");
     setVista("home");
   };
-    const editarPerfil = async () => {
+
+  const editarPerfil = async () => {
     const { value: formValues } = await Swal.fire({
-    
       title: "Editar perfil",
       border: "#7CFC00",
       background: "#151922",
       color: "#ffffff",
-      
       html:
         `<label class="text-white">NOMBRE</label>` +
-        `<input id="swal-nombre" class="swal2-input" value="${perfil.nombre || ""}">` +
+        `<input id="swal-nombre" class="swal2-input" value="${usuario?.primer_nombre || ""}">` +
         `<label class="text-white">EMAIL</label>` +
-        `<input id="swal-email" class="swal2-input" value="${perfil.email || ""}">` +
+        `<input id="swal-email" class="swal2-input" value="${usuario?.correo || ""}">` +
         `<label class="text-white">TELÉFONO</label>` +
-        `<input id="swal-telefono" class="swal2-input" value="${perfil.telefono || ""}">`,
-        confirmButtonColor: "#7CFC00",
-        showDenyButton: true,
-        confirmButtonText: "Guardar",
-        denyButtonText: `cancelar`,
+        `<input id="swal-telefono" class="swal2-input" value="${perfil?.telefono || ""}">`,
+      confirmButtonColor: "#7CFC00",
+      showDenyButton: true,
+      confirmButtonText: "Guardar",
+      denyButtonText: `Cancelar`,
       focusConfirm: false,
-      
       preConfirm: () => {
         return {
           nombre: document.getElementById("swal-nombre").value,
@@ -55,10 +54,6 @@ function ClienteDashboard({ setVista }) {
         };
       },
     });
-      <swal-button type="cancel">
-    Cancel
-  </swal-button>
-
 
     if (formValues) {
       fetch(`${API_URL}/${perfil.id}`, {
@@ -82,43 +77,47 @@ function ClienteDashboard({ setVista }) {
 
   if (!perfil) return <div className="text-white p-5">Cargando...</div>;
 
-        const cancelarClase = (id) => {
-        Swal.fire({
-          title: "¿Cancelar clase?",
-          background: "#151922",
-          icon: "warning",
-          showCancelButton: true,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            setClasesReservadas((prev) =>
-              prev.filter((c) => c.id !== id)
-            );
-          }
-        });
-      };
+  const cancelarClase = (id) => {
+    Swal.fire({
+      title: "¿Cancelar clase?",
+      background: "#151922",
+      icon: "warning",
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setClasesReservadas((prev) => prev.filter((c) => c.id !== id));
+      }
+    });
+  };
   
-    // 🔥 ESTA ES LA CLAVE
-    const cambiarPlan = (plan) => {
-      setPlanActual(plan.nombre);
-      setVerPlanes(false);
+  const cambiarPlan = (plan) => {
+    setPlanActual(plan.nombre);
+    setVerPlanes(false);
 
-      Swal.fire({
-        background: "#151922",
-        title: `Ahora tienes el plan ${plan.nombre}`,
-        icon: "success",
-        confirmButtonColor: "#7CFC00"
-      });
-    };
+    Swal.fire({
+      background: "#151922",
+      title: `Ahora tienes el plan ${plan.nombre}`,
+      icon: "success",
+      confirmButtonColor: "#7CFC00"
+    });
+  };
 
   return (
     <div className="d-flex" style={{ minHeight: "100vh", backgroundColor: "#000000" }}>
       <SidebarCliente setVista={setVista} />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        <header className="d-flex flex-row justify-content-between align-items-center bg-dark text-white px-4" style={{ height: 150 }}>
-          <div style={{ display: "flex" }}>
-            <h3 className="text-white">AREA DE </h3>
-            <h3 className="ms-2" style={{ color: "#7CFC00" }}>USUARIO</h3>
+        <header className="d-flex flex-row justify-content-between align-items-center bg-dark px-4" style={{ height: 150 }}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex" }}>
+              <h3 className="text-white">AREA DE </h3>
+              <h3 className="ms-2" style={{ color: "#7CFC00" }}>USUARIO</h3>
+            </div>
+            {usuario && (
+              <p style={{ color: "#A2FF00", margin: 0, fontSize: "18px" }}>
+                👤 Bienvenido, {usuario.primer_nombre} {usuario.primer_apellido}
+              </p>
+            )}
           </div>
 
           <div className="d-flex justify-content-end" style={{ height: "50%" }}>
@@ -137,8 +136,12 @@ function ClienteDashboard({ setVista }) {
             <div className="col-md-4">
               <div className="card bg-dark border-secondary">
                 <div className="card-body">
-                  <h5 className="fw-bold text-white text-center">{perfil.nombre || "Usuario"}</h5>
-                  <p className=" text-white text-center opacity-50 small">{perfil.email}</p>
+                  <h5 className="fw-bold text-white text-center">
+                    {usuario ? `${usuario.primer_nombre} ${usuario.primer_apellido}` : "Usuario"}
+                  </h5>
+                  <p className=" text-white text-center opacity-50 small">
+                    {usuario?.correo || perfil.email}
+                  </p>
                   
                   <ul className="list-unstyled mt-3">
                     <li className="d-flex justify-content-between border-bottom border-secondary border-opacity-25 py-3 text-white">
@@ -150,12 +153,11 @@ function ClienteDashboard({ setVista }) {
                     </li>
                     <li className="d-flex justify-content-between border-bottom border-secondary border-opacity-25 py-3 text-white">
                       <span>Plan actual:</span>
-                      <span 
-                      style={{color: "#A2FF00"}}>{perfil.miembroDesde || "PREMIUM"}</span>
+                      <span style={{color: "#A2FF00"}}>{planActual}</span>
                     </li>
                     <li className="d-flex justify-content-between border-bottom border-secondary border-opacity-25 py-3 text-white">
                       <span>Sesiones restantes:</span>
-                      <span>{perfil.miembroDesde || "3"}</span>
+                      <span>{perfil.sesionesRestantes || "3"}</span>
                     </li>
                     <li className="d-flex justify-content-center">
                       <button
@@ -171,26 +173,24 @@ function ClienteDashboard({ setVista }) {
               </div>
             </div>
 
-
-            
             <div className="col-md-4">
               <div className="card bg-dark ">
                 <div className="card-body bg-gray-800">
                   <h5 className="fw-bold text-white">PLANES</h5>
 
-                      <p className="text-center mt-3" style={{ color: "#A2FF00", fontWeight: "bold" }}>
-                        {planActual}
-                      </p>
-                      
-                      {verPlanes && (
-                        <CambiarPlan agregarReserva={cambiarPlan} />
-                      )}
-                      <li className="d-flex justify-content-center" >
-                      <button className="btn mt-3 w-100 "
+                  <p className="text-center mt-3" style={{ color: "#A2FF00", fontWeight: "bold" }}>
+                    {planActual}
+                  </p>
+                  
+                  {verPlanes && (
+                    <CambiarPlan agregarReserva={cambiarPlan} />
+                  )}
+                  <li className="d-flex justify-content-center" >
+                    <button className="btn mt-3 w-100 "
                       onClick={() => setVerPlanes(true)}
                       style={{backgroundColor:"transparent", border: "2px solid #A2FF00", color: "#A2FF00"}}
-                     >CAMBIAR PLAN</button>
-                    </li>
+                    >CAMBIAR PLAN</button>
+                  </li>
 
                 </div>
               </div>
