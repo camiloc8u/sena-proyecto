@@ -1,7 +1,12 @@
 import { useState } from "react"
+<<<<<<< HEAD
 import logo from "../assets/logo.png";
 
 function FilaRutina({dia, rutina, ejercicio}){
+=======
+
+function FilaRutina({dia, rutina, ejercicio, logo}){
+>>>>>>> origin/samuel
     const [completado, setCompletado] = useState(false);
 
     return (

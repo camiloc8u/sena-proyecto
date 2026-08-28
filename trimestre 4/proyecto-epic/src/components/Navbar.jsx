@@ -24,11 +24,19 @@ export default function Navbar({ onOpenAuth }) {
             <a href="#precios" className="text-gray-300 hover:text-lime-400 transition-colors">Precios</a>
             <a href="#menu" className="text-gray-300 hover:text-lime-400 transition-colors">Menú</a>
             <a href="#contacto" className="text-gray-300 hover:text-lime-400 transition-colors">Contacto</a>
+<<<<<<< HEAD
               <button className="text-black" 
               style={{backgroundColor:"#98eb01", height:"40px"}}
               data-bs-toggle="modal"
               data-bs-target="#modalLogin" 
               >Iniciar Sesion</button>
+=======
+            <button className="text-black" 
+              style={{backgroundColor:"#98eb01", height:"40px"}}
+              data-bs-toggle="modal"
+              data-bs-target="#modalLogin" 
+              >Unete ahora</button>
+>>>>>>> origin/samuel
 
           </div>
 
