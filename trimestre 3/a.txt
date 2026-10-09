@@ -1,0 +1,138 @@
+------1
+CREATE PROCEDURE p_encriptar_password_sha2(
+    IN p_password VARCHAR(255),
+    OUT p_password_hash VARCHAR(255)
+)
+BEGIN
+    DECLARE v_salt VARCHAR(64);
+    DECLARE v_hash_combinado VARCHAR(128);
+    DECLARE v_uuid VARCHAR(36);
+    
+    -- Validar que la contraseña no esté vacía
+    IF p_password IS NULL OR p_password = '' THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'La contraseña no puede estar vacía';
+    END IF;
+    
+    -- Generar UUID para salt único
+    SET v_uuid = UUID();
+    
+    -- Generar salt: combinación de UUID y timestamp
+    SET v_salt = SHA2(CONCAT(v_uuid, NOW()), 256);
+    
+    -- Generar hash combinando password + salt (método consistente)
+    SET v_hash_combinado = SHA2(CONCAT(p_password, v_salt), 256);
+    
+    -- Almacenar en formato: salt:hash
+    SET p_password_hash = CONCAT(v_salt, ':', v_hash_combinado);
+    
+END
+-----2
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `p_validar_password_sha2`(
+    IN p_password_intento VARCHAR(255),
+    IN p_password_hash_almacenado VARCHAR(255),
+    OUT p_es_valida BOOLEAN
+)
+BEGIN
+    DECLARE v_salt_almacenado VARCHAR(64);
+    DECLARE v_hash_almacenado VARCHAR(128);
+    DECLARE v_hash_calculado VARCHAR(128);
+    
+    -- Extraer salt y hash del formato almacenado (salt:hash)
+    SET v_salt_almacenado = SUBSTRING_INDEX(p_password_hash_almacenado, ':', 1);
+    SET v_hash_almacenado = SUBSTRING_INDEX(p_password_hash_almacenado, ':', -1);
+    
+    -- Calcular hash con el password intentado y el mismo salt
+    SET v_hash_calculado = SHA2(CONCAT(p_password_intento, v_salt_almacenado), 256);
+    
+    -- Comparar (usando comparación directa)
+    IF v_hash_calculado = v_hash_almacenado THEN
+        SET p_es_valida = TRUE;
+    ELSE
+        SET p_es_valida = FALSE;
+    END IF;
+END
+------3
+-- Insertar historial de precios
+INSERT INTO Historial_Precios (id_producto, precio_anterior, precio_nuevo, motivo, id_usuario_modifico) VALUES
+(1, 3800, 4200, 'Ajuste por inflación', 5),
+(3, 3500, 3800, 'Ajuste de proveedor', 5);
+
+-- p_validar_password_sha2p_validar_password_sha2sp_registrar_clientepaso 1:
+SET @username_buscar = 'mrodriguez';  -- Cambia aquí el usuario
+SET @password_probar = 'MiClaveSegura123*';
+
+-- PASO 2: Extraer el hash de la base de datos
+SELECT 
+    u.id_usuario,
+    u.username,
+    u.password_hash,
+    SUBSTRING_INDEX(u.password_hash, ':', 1) as salt,
+    SUBSTRING_INDEX(u.password_hash, ':', -1) as hash
+INTO @id_usuario, @username, @hash_completo, @salt, @hash_guardado
+FROM Usuarios u
+WHERE u.username = @username_buscar;
+
+-- PASO 3: Mostrar la información (opcional, para verificar. estar seguro)
+SELECT 
+    @username_buscar as usuario,
+    @hash_completo as hash_completo,
+    @salt as salt_extraido,
+    @hash_guardado as hash_guardado;
+
+
+-- PASO 4: Validar la contraseña
+SET @resultado = FALSE;
+CALL p_validar_password_sha2(@password_probar, @hash_completo, @resultado);
+
+
+-- PASO 5: Ver el resultado
+SELECT 
+    @username_buscar as usuario,
+    @password_probar as contraseña_probada,
+    @resultado as es_valida,
+    CASE @resultado 
+        WHEN 1 THEN 'CONTRASEÑA CORRECTA - Acceso permitido'
+        WHEN 0 THEN 'CONTRASEÑA INCORRECTA - Acceso denegado'
+    END as resultado_legible;
+    
+
+-- Actualizar admin
+SET @password = 'MiClaveSegura123*';
+CALL p_encriptar_password_sha2(@password, @hash);
+UPDATE Usuarios SET password_hash = @hash WHERE username = 'mrodriguez';
+
+-- Actualizar cliente1
+SET @password = 'Cliente123*';
+CALL p_encriptar_password_sha2(@password, @hash);
+UPDATE Usuarios SET password_hash = @hash WHERE username = 'cliente1';
+
+-- Actualizar cajero1
+SET @password = 'Cajero123*';
+CALL p_encriptar_password_sha2(@password, @hash);
+UPDATE Usuarios SET password_hash = @hash WHERE username = 'cajero1';
+
+-- Actualizar contador1
+SET @password = 'Contador123*';
+CALL p_encriptar_password_sha2(@password, @hash);
+UPDATE Usuarios SET password_hash = @hash WHERE username = 'contador1';
+
+-- Actualizar inventario1
+SET @password = 'Inventario123*';
+CALL p_encriptar_password_sha2(@password, @hash);
+UPDATE Usuarios SET password_hash = @hash WHERE username = 'inventario1';
+-- insercion
+CALL sp_registrar_cliente(
+    'CC',
+    '1234567890',
+    'María Rodríguez',
+    '3009876543',
+    'maria@email.com',
+    'mrodriguez',
+    'MiClaveSegura123*',  -- Contraseña en texto plano
+    'Carrera 45 #23-12',
+    'Medellín',
+    'El Poblado'
+);
