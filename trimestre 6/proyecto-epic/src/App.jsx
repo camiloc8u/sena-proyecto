@@ -7,6 +7,7 @@ import Rutinas from "./pages/Rutinas";
 import Progreso from "./pages/Progreso";
 import Clases from "./pages/Clases";
 import NavbarAdmin from "./components/admin/NavbarAdmin";
+import Tienda from "./pages/Tienda";
 import "./globals.css";
 
 function App() {
@@ -39,6 +40,8 @@ function App() {
       {vista === "clases" && <Clases setVista={setVista} />}
       {vista === "Administrador" && <AdminDashboard setVista={setVista} />}
       {vista === "adminNav" && <NavbarAdmin setVista={setVista} />}
+      {vista === "tienda" && <Tienda cartItems={carrito} setVista={setVista} />}
+      {vista === "tienda" && <Tienda setVista={setVista} />} 
     </>
   );
 }

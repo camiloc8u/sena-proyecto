@@ -1,4 +1,4 @@
-import { X, MapPin, User, Phone, Mail } from "lucide-react";
+import { X, User, ShoppingCart } from "lucide-react";
 import { useState } from "react";
 
 export default function Checkout({ isOpen, onClose, cartItems, total }) {
@@ -25,7 +25,6 @@ export default function Checkout({ isOpen, onClose, cartItems, total }) {
     setIsProcessing(true);
 
     try {
-      // Conexión con el servidor Node.js
       const response = await fetch("http://localhost:3001/api/create-preference", {
         method: "POST",
         headers: {
@@ -69,97 +68,153 @@ export default function Checkout({ isOpen, onClose, cartItems, total }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/95 z-50 overflow-y-auto">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="flex justify-between items-center mb-8">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 overflow-y-auto">
+      <div className="container mx-auto px-4 py-12 max-w-4xl">
+        
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8 pb-4 border-b border-[#333333]">
           <div>
-            <h1 className="text-4xl text-white mb-2">CHECKOUT <span className="text-lime-400">PAGO</span></h1>
-            <p className="text-gray-400">Paga en línea y recoge tu pedido en el gimnasio</p>
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-1">
+              CHECKOUT <span style={{ color: "#99FF00" }}>PAGO</span>
+            </h1>
+            <p className="text-gray-400 text-sm">Paga en línea de forma segura y recoge tu pedido en el gimnasio</p>
           </div>
-          <button onClick={handleClose} className="text-white hover:text-lime-400">
-            <X className="w-8 h-8" />
+          <button 
+            onClick={handleClose} 
+            className="text-gray-400 hover:text-white transition-colors p-2 rounded-lg bg-[#1a1a1a] border border-[#333333] cursor-pointer"
+          >
+            <X className="w-6 h-6" />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Grid Principal */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Formulario de información */}
           <div className="lg:col-span-2">
-            <form onSubmit={handlePaymentSubmit} className="bg-zinc-900 border-2 border-zinc-800 p-6">
-              <h2 className="text-2xl text-white mb-6 flex items-center gap-2">
-                <User className="w-6 h-6 text-lime-400" /> TU INFORMACIÓN
+            <form 
+              onSubmit={handlePaymentSubmit} 
+              className="p-6 md:p-8 rounded-xl shadow-xl"
+              style={{ backgroundColor: "#1a1a1a", border: "1px solid #333333" }}
+            >
+              <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2.5">
+                <div className="p-2 rounded-lg bg-[#111111] border border-[#333333]">
+                  <User className="w-5 h-5" style={{ color: "#99FF00" }} />
+                </div>
+                TU INFORMACIÓN
               </h2>
 
               <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Nombre Completo"
-                  value={customerData.fullName}
-                  onChange={(e) => setCustomerData({ ...customerData, fullName: e.target.value })}
-                  className="w-full px-4 py-3 bg-zinc-950 border border-zinc-700 text-white focus:border-lime-400 focus:outline-none"
-                  required
-                />
-                
-                <div className="grid grid-cols-2 gap-4">
-                   <select 
-                    value={customerData.idType}
-                    onChange={(e) => setCustomerData({ ...customerData, idType: e.target.value })}
-                    className="bg-zinc-950 border border-zinc-700 text-white p-3">
-                     <option value="CC">CC</option>
-                     <option value="CE">CE</option>
-                   </select>
-                   <input
+                <div>
+                  <label className="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Nombre Completo</label>
+                  <input
                     type="text"
-                    placeholder="Documento"
-                    value={customerData.idNumber}
-                    onChange={(e) => setCustomerData({ ...customerData, idNumber: e.target.value })}
-                    className="w-full px-4 py-3 bg-zinc-950 border border-zinc-700 text-white"
+                    placeholder="Ej. Camilo Morales"
+                    value={customerData.fullName}
+                    onChange={(e) => setCustomerData({ ...customerData, fullName: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg text-white text-sm focus:outline-none transition-all"
+                    style={{ backgroundColor: "#111111", border: "1px solid #333333" }}
+                    required
+                  />
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Tipo ID</label>
+                    <select 
+                      value={customerData.idType}
+                      onChange={(e) => setCustomerData({ ...customerData, idType: e.target.value })}
+                      className="w-full px-4 py-3 rounded-lg text-white text-sm focus:outline-none transition-all"
+                      style={{ backgroundColor: "#111111", border: "1px solid #333333" }}
+                    >
+                      <option value="CC">Cédula de Ciudadanía (CC)</option>
+                      <option value="CE">Cédula de Extranjería (CE)</option>
+                    </select>
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Número de Documento</label>
+                    <input
+                      type="text"
+                      placeholder="Ej. 1000000000"
+                      value={customerData.idNumber}
+                      onChange={(e) => setCustomerData({ ...customerData, idNumber: e.target.value })}
+                      className="w-full px-4 py-3 rounded-lg text-white text-sm focus:outline-none transition-all"
+                      style={{ backgroundColor: "#111111", border: "1px solid #333333" }}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Correo Electrónico</label>
+                  <input
+                    type="email"
+                    placeholder="correo@ejemplo.com"
+                    value={customerData.email}
+                    onChange={(e) => setCustomerData({ ...customerData, email: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg text-white text-sm focus:outline-none transition-all"
+                    style={{ backgroundColor: "#111111", border: "1px solid #333333" }}
                     required
                   />
                 </div>
 
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={customerData.email}
-                  onChange={(e) => setCustomerData({ ...customerData, email: e.target.value })}
-                  className="w-full px-4 py-3 bg-zinc-950 border border-zinc-700 text-white"
-                  required
-                />
-
-                <input
-                  type="tel"
-                  placeholder="Teléfono"
-                  value={customerData.phone}
-                  onChange={(e) => setCustomerData({ ...customerData, phone: e.target.value })}
-                  className="w-full px-4 py-3 bg-zinc-950 border border-zinc-700 text-white"
-                  required
-                />
+                <div>
+                  <label className="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Teléfono / Celular</label>
+                  <input
+                    type="tel"
+                    placeholder="Ej. 3194794872"
+                    value={customerData.phone}
+                    onChange={(e) => setCustomerData({ ...customerData, phone: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg text-white text-sm focus:outline-none transition-all"
+                    style={{ backgroundColor: "#111111", border: "1px solid #333333" }}
+                    required
+                  />
+                </div>
               </div>
 
               <button
                 type="submit"
                 disabled={isProcessing}
-                className="w-full mt-8 bg-lime-400 text-black py-4 font-bold text-lg hover:bg-lime-500 disabled:opacity-50"
+                className="w-full mt-8 font-bold py-4 rounded-lg transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer uppercase tracking-wider text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ backgroundColor: "#99FF00", color: "#111111" }}
+                onMouseEnter={(e) => !isProcessing && (e.currentTarget.style.backgroundColor = "#8ce600")}
+                onMouseLeave={(e) => !isProcessing && (e.currentTarget.style.backgroundColor = "#99FF00")}
               >
-                {isProcessing ? "PROCESANDO..." : `PAGAR $${total.toLocaleString('es-CO')} COP`}
+                <ShoppingCart className="w-5 h-5" />
+                {isProcessing ? "PROCESANDO PAGO..." : `PAGAR $${total.toLocaleString('es-CO')} COP`}
               </button>
             </form>
           </div>
 
+          {/* Resumen del pedido */}
           <div className="lg:col-span-1">
-            <div className="bg-zinc-900 border-2 border-zinc-800 p-6">
-              <h3 className="text-xl text-white mb-4">RESUMEN</h3>
-              {cartItems.map((item) => (
-                <div key={item.id} className="flex justify-between text-sm mb-2">
-                  <span className="text-white">{item.name} x{item.quantity}</span>
-                  <span className="text-lime-400">${(item.price * item.quantity).toLocaleString('es-CO')}</span>
-                </div>
-              ))}
-              <div className="border-t border-zinc-800 mt-4 pt-4 flex justify-between font-bold">
-                <span className="text-white">Total</span>
-                <span className="text-lime-400">${total.toLocaleString('es-CO')}</span>
+            <div 
+              className="p-6 rounded-xl shadow-xl sticky top-6"
+              style={{ backgroundColor: "#1a1a1a", border: "1px solid #333333" }}
+            >
+              <h3 className="text-lg font-bold text-white mb-4 uppercase tracking-wide">Resumen del Pedido</h3>
+              
+              <div className="space-y-3 mb-6 max-h-60 overflow-y-auto pr-1">
+                {cartItems.map((item) => (
+                  <div key={item.id} className="flex justify-between items-center text-sm pb-3 border-b border-[#222222]">
+                    <span className="text-gray-300 pr-2">
+                      {item.name} <span className="text-xs font-bold" style={{ color: "#99FF00" }}>x{item.quantity}</span>
+                    </span>
+                    <span className="text-white font-semibold whitespace-nowrap">
+                      ${(item.price * item.quantity).toLocaleString('es-CO')}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="pt-2 border-t border-[#333333] flex justify-between items-center text-lg font-bold">
+                <span className="text-white">Total a pagar</span>
+                <span style={{ color: "#99FF00" }}>${total.toLocaleString('es-CO')} COP</span>
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>

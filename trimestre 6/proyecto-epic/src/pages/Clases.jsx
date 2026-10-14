@@ -25,17 +25,11 @@ function Clases({setVista}){
       });
     };
 
-
+  // 🔥 ESTA ES LA CLAVE
   const agregarReserva = (clase) => {
     setClasesReservadas((prev) => [...prev, clase]);
     setVerReservar(false);
   };
-      const cerrarSesion = () => {
-    localStorage.removeItem("usuario");
-    localStorage.removeItem("token");
-    setVista("home");
-  };
-
     return(
            <div
       className="d-flex"
@@ -58,15 +52,6 @@ function Clases({setVista}){
             <h3 className="ms-2" style={{ color: "#7CFC00" }}>
               USUARIO
             </h3>
-          </div>
-            <div className="d-flex justify-content-end" style={{ height: "50%" }}>
-            <button
-              className="btn btn-dark btn-sm"
-              style={{ backgroundColor: "transparent", border: "2px solid #A2FF00", color: "#A2FF00" }}
-              onClick={cerrarSesion}
-            >
-              Cerrar sesión
-            </button>
           </div>
         </header>
 
