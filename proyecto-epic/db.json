@@ -1,0 +1,19 @@
+{
+  "usuarios": [
+    {
+      "id": "1",
+      "correo": "admin@gym.com",
+      "password": "1234",
+      "rol": "admin",
+      "nombre": "Administrador"
+    },
+    {
+      "id": "2",
+      "correo": "cliente@gym.com",
+      "password": "1234",
+      "rol": "cliente",
+      "nombre": "Cliente"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
