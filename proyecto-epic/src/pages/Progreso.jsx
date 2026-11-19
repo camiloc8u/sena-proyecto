@@ -2,6 +2,12 @@ import SidebarCliente from "../components/dashboard/SidebarCliente";
 import { TrendingUp } from "lucide-react";
 function Progreso({setVista}){
 
+  const cerrarSesion = () => {
+    sessionStorage.removeItem("usuario");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("token_time");
+    setVista("home");
+  };
     return(
    <div
       className="d-flex"
@@ -24,6 +30,15 @@ function Progreso({setVista}){
             <h3 className="ms-2" style={{ color: "#7CFC00" }}>
               USUARIO
             </h3>
+          </div>
+                      <div className="d-flex justify-content-end" style={{ height: "50%" }}>
+            <button
+              className="btn btn-dark btn-sm"
+              style={{ backgroundColor: "transparent", border: "2px solid #A2FF00", color: "#A2FF00" }}
+              onClick={cerrarSesion}
+            >
+              Cerrar sesión
+            </button>
           </div>
         </header>
 

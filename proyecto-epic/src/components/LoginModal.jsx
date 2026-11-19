@@ -37,9 +37,9 @@ function LoginModal({ setVista }) {
 
       if (data.exito) {
         const usuarioEncontrado = data.usuario;
-        localStorage.setItem("usuario", JSON.stringify(usuarioEncontrado));
+        sessionStorage.setItem("usuario", JSON.stringify(usuarioEncontrado));
         const token = `jwt-${usuarioEncontrado.rol}-${Date.now()}`;
-        localStorage.setItem("token", token);
+        sessionStorage.setItem("token", token);
 
         document.getElementById("cerrarModalLogin").click();
         document.body.classList.remove("modal-open");

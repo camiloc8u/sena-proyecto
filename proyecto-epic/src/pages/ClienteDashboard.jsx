@@ -9,7 +9,7 @@ function ClienteDashboard({ setVista }) {
   const [verPlanes, setVerPlanes] = useState(false);
   const API_URL = "https://69c2c5f37518bf8facbf7620.mockapi.io/Usuario";
   
-  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const usuario = JSON.parse(sessionStorage.getItem("usuario"));
 
   useEffect(() => {
     if (usuario && usuario.idusuario) {

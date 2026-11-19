@@ -6,6 +6,13 @@ import { useState } from "react";
 function Rutinas({ setVista }) { 
   const [encendido, setEncendido] = useState(false);
 
+    const cerrarSesion = () => {
+    sessionStorage.removeItem("usuario");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("token_time");
+    setVista("home");
+  };
+
   return (
     <div
       className="d-flex"
@@ -29,6 +36,16 @@ function Rutinas({ setVista }) {
             <h3 className="ms-2" style={{ color: "#7CFC00" }}>
               USUARIO
             </h3>
+          </div>
+
+            <div className="d-flex justify-content-end" style={{ height: "50%" }}>
+            <button
+              className="btn btn-dark btn-sm"
+              style={{ backgroundColor: "transparent", border: "2px solid #A2FF00", color: "#A2FF00" }}
+              onClick={cerrarSesion}
+            >
+              Cerrar sesión
+            </button>
           </div>
         </header>
 
